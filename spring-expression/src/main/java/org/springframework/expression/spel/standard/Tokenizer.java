@@ -257,6 +257,9 @@ class Tokenizer {
 					case '"':
 						lexDoubleQuotedStringLiteral();
 						break;
+					case '`':
+						lexQuotedIdentifier();
+						break;
 					case 0:
 						// hit sentinel at end of value
 						this.pos++;  // will take us to the end
@@ -462,6 +465,17 @@ class Tokenizer {
 				return;
 			}
 		}
+		this.tokens.add(new Token(TokenKind.IDENTIFIER, subarray, start, this.pos));
+	}
+
+	private void lexQuotedIdentifier() {
+		int start = this.pos;
+		do {
+			this.pos++;
+		}
+		while(this.charsToProcess[this.pos] != '`');
+		char[] subarray = subarray(start+1, this.pos);
+		this.pos++; // advance behind the closing '`'
 		this.tokens.add(new Token(TokenKind.IDENTIFIER, subarray, start, this.pos));
 	}
 
